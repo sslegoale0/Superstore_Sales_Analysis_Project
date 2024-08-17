@@ -310,7 +310,7 @@ ALTER COLUMN [Profit] FLOAT;
 
 -----------------------------------------------------------------------------------------------------------------
 
-/* 1. Key Performance Indicators by Year. */
+/* 1. Key performance indicators by Year. */
 
 SELECT YEAR([Order Date]) AS "Year",
 ROUND(SUM([Sales]), 0) AS "Total Sales",
@@ -325,6 +325,157 @@ ORDER BY [Year] DESC;
 
 
 
-/* 2.  */
-	
-	
+/* 2. Year over year differences of key performance indicators */
+
+CREATE TABLE #Yearly_KPIs (
+[Year] INT,
+[Total Sales] FLOAT,
+[Total Quantity] FLOAT,
+[Total Profit] FLOAT,
+[Total Orders] FLOAT,
+[Total Customers] FLOAT)
+
+INSERT INTO #Yearly_KPIs
+SELECT YEAR([Order Date]) AS "Year",
+ROUND(SUM([Sales]), 0) AS "Total Sales",
+SUM([Quantity]) AS "Total Quantity",
+ROUND(SUM([Profit]), 0) AS "Total Profit",
+COUNT(DISTINCT [Order ID]) AS "Total Orders",
+COUNT(DISTINCT [Customer ID]) AS "Total Customers"
+FROM orders
+WHERE [Country/Region] = 'United States'
+GROUP BY YEAR([Order Date])
+ORDER BY [Year] ASC;
+
+SELECT *
+FROM #Yearly_KPIs;
+
+SELECT [Year],
+[Total Sales] AS "CY Sales",
+LAG([Total Sales]) OVER (ORDER BY [Year]) AS "PY Sales",
+ROUND(([Total Sales] - LAG([Total Sales]) OVER (ORDER BY [Year])) * 100
+/
+LAG([Total Sales]) OVER (ORDER BY [Year]), 1) AS "YoY Sales (%)"
+FROM #Yearly_KPIs;
+
+
+
+SELECT [Year],
+[Total Quantity] AS "CY Quantity",
+LAG([Total Quantity]) OVER (ORDER BY [Year]) AS "PY Quantity",
+ROUND(([Total Quantity] - LAG([Total Quantity]) OVER (ORDER BY [Year])) * 100
+/
+LAG([Total Quantity]) OVER (ORDER BY [Year]), 1) AS "YoY Quantity (%)"
+FROM #Yearly_KPIs;
+
+
+
+SELECT [Year],
+[Total Profit] AS "CY Profit",
+LAG([Total Profit]) OVER (ORDER BY [Year]) AS "PY Profit",
+ROUND(([Total Profit] - LAG([Total Profit]) OVER (ORDER BY [Year])) * 100
+/
+LAG([Total Profit]) OVER (ORDER BY [Year]), 1) AS "YoY Profit (%)"
+FROM #Yearly_KPIs;
+
+
+
+SELECT [Year],
+[Total Orders] AS "CY Orders",
+LAG([Total Orders]) OVER (ORDER BY [Year]) AS "PY Orders",
+ROUND(([Total Orders] - LAG([Total Orders]) OVER (ORDER BY [Year])) * 100
+/
+LAG([Total Orders]) OVER (ORDER BY [Year]), 1) AS "YoY Orders (%)"
+FROM #Yearly_KPIs;
+
+
+
+SELECT [Year],
+[Total Customers] AS "CY Customers",
+LAG([Total Customers]) OVER (ORDER BY [Year]) AS "PY Customers",
+ROUND(([Total Customers] - LAG([Total Customers]) OVER (ORDER BY [Year])) * 100
+/
+LAG([Total Customers]) OVER (ORDER BY [Year]), 1) AS "YoY Customers (%)"
+FROM #Yearly_KPIs;
+
+
+
+/* 3. Key performance indicators by Year and Month */
+
+SELECT YEAR([Order Date]) AS "Year",
+DATENAME(MONTH, [Order Date]) AS "Month",
+ROUND(SUM([Sales]), 0) AS "Total Sales",
+SUM([Quantity]) AS "Total Quantity",
+ROUND(SUM([Profit]), 0) AS "Total Profit",
+COUNT(DISTINCT [Order ID]) AS "Total Orders",
+COUNT(DISTINCT [Customer ID]) AS "Total Customers"
+FROM orders
+WHERE [Country/Region] = 'United States'
+GROUP BY YEAR([Order Date]), DATEPART(MONTH, [Order Date]), DATENAME(MONTH, [Order Date])
+ORDER BY [Year] DESC, DATEPART(MONTH, [Order Date]) ASC;
+
+
+
+/* 4. Key performance indicators by Year, Region and State. */
+
+SELECT YEAR([Order Date]) AS "Year",
+[Region],
+[State/Province],
+ROUND(SUM([Sales]), 0) AS "Total Sales",
+SUM([Quantity]) AS "Total Quantity",
+ROUND(SUM([Profit]), 0) AS "Total Profit",
+COUNT(DISTINCT [Order ID]) AS "Total Orders",
+COUNT(DISTINCT [Customer ID]) AS "Total Customers"
+FROM orders
+WHERE [Country/Region] = 'United States'
+GROUP BY YEAR([Order Date]), [Region], [State/Province]
+ORDER BY [Year] DESC;
+
+
+
+/* 5. Key performance indicators by Year, Category and Sub-category. */
+
+SELECT YEAR([Order Date]) AS "Year",
+[Category],
+[Sub-Category],
+ROUND(SUM([Sales]), 0) AS "Total Sales",
+SUM([Quantity]) AS "Total Quantity",
+ROUND(SUM([Profit]), 0) AS "Total Profit",
+COUNT(DISTINCT [Order ID]) AS "Total Orders",
+COUNT(DISTINCT [Customer ID]) AS "Total Customers"
+FROM orders
+WHERE [Country/Region] = 'United States'
+GROUP BY YEAR([Order Date]), [Category], [Sub-Category]
+ORDER BY [Year] DESC;
+
+
+
+/* 6. Key performance indicators by Year and Segment */
+
+SELECT YEAR([Order Date]) AS "Year",
+[Segment],
+ROUND(SUM([Sales]), 0) AS "Total Sales",
+SUM([Quantity]) AS "Total Quantity",
+ROUND(SUM([Profit]), 0) AS "Total Profit",
+COUNT(DISTINCT [Order ID]) AS "Total Orders",
+COUNT(DISTINCT [Customer ID]) AS "Total Customers"
+FROM orders
+WHERE [Country/Region] = 'United States'
+GROUP BY YEAR([Order Date]), [Segment]
+ORDER BY [Year] DESC;
+
+
+
+/* 7. Key performance indicators by Year and Ship Mode */
+
+SELECT YEAR([Order Date]) AS "Year",
+[Ship Mode],
+ROUND(SUM([Sales]), 0) AS "Total Sales",
+SUM([Quantity]) AS "Total Quantity",
+ROUND(SUM([Profit]), 0) AS "Total Profit",
+COUNT(DISTINCT [Order ID]) AS "Total Orders",
+COUNT(DISTINCT [Customer ID]) AS "Total Customers"
+FROM orders
+WHERE [Country/Region] = 'United States'
+GROUP BY YEAR([Order Date]), [Ship Mode]
+ORDER BY [Year] DESC;
