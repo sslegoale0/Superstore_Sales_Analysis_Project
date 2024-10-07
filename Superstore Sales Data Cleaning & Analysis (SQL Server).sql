@@ -258,7 +258,7 @@ ORDER BY [Category] ASC;
 
 SELECT DISTINCT [Category],
 [Product ID]
-FROM Orders
+FROM orders
 WHERE LEFT([Category], 3) <> LEFT([Product ID], 3);
 
 
@@ -308,6 +308,22 @@ ALTER COLUMN [Profit] FLOAT;
 
 
 
+/* 3. Imputation of null/blank values. */
+
+
+
+/* 4. Removal of rows irrelavant columns to the analysis. */
+
+
+
+/* 5. Removal of rows irrelavant rows to the analysis. */
+
+DELETE
+FROM orders
+WHERE [Country/Region] = 'Canada';
+
+
+
 -----------------------------------------------------------------------------------------------------------------
 
 /* 1. Key performance indicators by Year. */
@@ -319,7 +335,6 @@ ROUND(SUM([Profit]), 0) AS "Total Profit",
 COUNT(DISTINCT [Order ID]) AS "Total Orders",
 COUNT(DISTINCT [Customer ID]) AS "Total Customers"
 FROM orders
-WHERE [Country/Region] = 'United States'
 GROUP BY YEAR([Order Date])
 ORDER BY [Year] DESC;
 
@@ -343,7 +358,6 @@ ROUND(SUM([Profit]), 0) AS "Total Profit",
 COUNT(DISTINCT [Order ID]) AS "Total Orders",
 COUNT(DISTINCT [Customer ID]) AS "Total Customers"
 FROM orders
-WHERE [Country/Region] = 'United States'
 GROUP BY YEAR([Order Date])
 ORDER BY [Year] ASC;
 
@@ -410,7 +424,6 @@ ROUND(SUM([Profit]), 0) AS "Total Profit",
 COUNT(DISTINCT [Order ID]) AS "Total Orders",
 COUNT(DISTINCT [Customer ID]) AS "Total Customers"
 FROM orders
-WHERE [Country/Region] = 'United States'
 GROUP BY YEAR([Order Date]), DATEPART(MONTH, [Order Date]), DATENAME(MONTH, [Order Date])
 ORDER BY [Year] DESC, DATEPART(MONTH, [Order Date]) ASC;
 
@@ -427,7 +440,6 @@ ROUND(SUM([Profit]), 0) AS "Total Profit",
 COUNT(DISTINCT [Order ID]) AS "Total Orders",
 COUNT(DISTINCT [Customer ID]) AS "Total Customers"
 FROM orders
-WHERE [Country/Region] = 'United States'
 GROUP BY YEAR([Order Date]), [Region], [State/Province]
 ORDER BY [Year] DESC;
 
@@ -444,7 +456,6 @@ ROUND(SUM([Profit]), 0) AS "Total Profit",
 COUNT(DISTINCT [Order ID]) AS "Total Orders",
 COUNT(DISTINCT [Customer ID]) AS "Total Customers"
 FROM orders
-WHERE [Country/Region] = 'United States'
 GROUP BY YEAR([Order Date]), [Category], [Sub-Category]
 ORDER BY [Year] DESC;
 
@@ -460,7 +471,6 @@ ROUND(SUM([Profit]), 0) AS "Total Profit",
 COUNT(DISTINCT [Order ID]) AS "Total Orders",
 COUNT(DISTINCT [Customer ID]) AS "Total Customers"
 FROM orders
-WHERE [Country/Region] = 'United States'
 GROUP BY YEAR([Order Date]), [Segment]
 ORDER BY [Year] DESC;
 
@@ -476,6 +486,5 @@ ROUND(SUM([Profit]), 0) AS "Total Profit",
 COUNT(DISTINCT [Order ID]) AS "Total Orders",
 COUNT(DISTINCT [Customer ID]) AS "Total Customers"
 FROM orders
-WHERE [Country/Region] = 'United States'
 GROUP BY YEAR([Order Date]), [Ship Mode]
 ORDER BY [Year] DESC;
